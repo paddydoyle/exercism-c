@@ -4,7 +4,7 @@
 
 bool is_isogram(const char phrase[]) {
 	unsigned int i, j;
-	const char STOP_LETTERS[] = " -";
+	const char STOP_CHARS[] = " -";
 	char c;
 
 	// Test input
@@ -24,7 +24,7 @@ bool is_isogram(const char phrase[]) {
 		c = tolower(c);
 
 		for (j=i+1; j<strlen(phrase); j++) {
-			if (strchr(STOP_LETTERS, phrase[i])) {
+			if (strchr(STOP_CHARS, phrase[i])) {
 				continue;
 			}
 			if (c == tolower(phrase[j])) {
