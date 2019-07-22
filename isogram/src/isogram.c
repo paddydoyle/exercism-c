@@ -7,7 +7,7 @@ bool is_isogram(const char phrase[]) {
 	const char STOP_CHARS[] = " -";
 	char c;
 
-	// Test input
+	// Test for edge case.
 	if (phrase == NULL) {
 		return false;
 	}
