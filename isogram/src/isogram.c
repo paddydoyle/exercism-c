@@ -16,15 +16,15 @@ bool is_isogram(const char phrase[]) {
 	for (i=0; i<strlen(phrase); i++) {
 		c = phrase[i];
 
-		// Non-alpha character.
-		if (!isalpha(c)) {
-			return false;
+		// Ignore non-alpha chars.
+		if (!isalpha(c) || strchr(STOP_CHARS, phrase[i])) {
+			continue;
 		}
 
 		c = tolower(c);
 
 		for (j=i+1; j<strlen(phrase); j++) {
-			if (strchr(STOP_CHARS, phrase[i])) {
+			if (strchr(STOP_CHARS, phrase[j])) {
 				continue;
 			}
 			if (c == tolower(phrase[j])) {
