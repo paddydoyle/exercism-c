@@ -86,6 +86,11 @@ int _is_already_found(const char *word, word_count_word_t * words) {
 	int i;
 
 	for (i=0; i<MAX_WORDS; i++) {
+		// Short-cut the search if possible.
+		if (words[i].text[0] == '\0') {
+			return -1;
+		}
+
 		if (strncasecmp(word, words[i].text, MAX_WORD_LENGTH) == 0) {
 			return i;
 		}
