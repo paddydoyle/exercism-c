@@ -7,6 +7,7 @@
 #include "word_count.h"
 
 int _is_already_found(const char *word, word_count_word_t * words);
+void _safe_strncpy(char *dest, const char *src, size_t n);
 
 int word_count(const char *input_text, word_count_word_t * words) {
 	int count = 0;
@@ -15,7 +16,7 @@ int word_count(const char *input_text, word_count_word_t * words) {
 	int err_no;
 
 	//char *pattern = "[[:alnum:]]+'?[[:alnum:]]+";
-	char *pattern = "[[:alnum:]]\\+'\\?[[:alnum:]]*";
+	char *pattern = "[[:alnum:]]+'?[[:alnum:]]*";
 	//char *pattern = "[[:alnum:]]";
 	regex_t *regex;
 
@@ -23,6 +24,7 @@ int word_count(const char *input_text, word_count_word_t * words) {
 
 	regmatch_t *result;
 	int start=0; /* The offset from the beginning of the line */
+	const char *input_text_p = input_text;
 
 	printf("input_text = %s\n", input_text);
 
@@ -31,7 +33,7 @@ int word_count(const char *input_text, word_count_word_t * words) {
 	memset(regex, 0, sizeof(regex_t));
 
 	/* Compile the regex */
-	if((err_no = regcomp(regex, pattern, 0)) != 0) {
+	if((err_no = regcomp(regex, pattern, REG_EXTENDED | REG_ICASE)) != 0) {
 		perror("Regex failed to compile.\n");
 		exit(EXIT_FAILURE);
 	}
@@ -46,25 +48,26 @@ int word_count(const char *input_text, word_count_word_t * words) {
 		exit(EXIT_FAILURE);
 	}
 
-	while(regexec(regex, input_text+start, no_sub, result, 0) == 0) /* Found a match */
+	while(regexec(regex, input_text_p, no_sub, result, 0) == 0) /* Found a match */
 	{
-		printf("\n-- start: %d; end: %d; word = %s", result->rm_so, result->rm_eo, input_text+start);
+		printf("\n-- START: %d (%s)\n", start, input_text_p);
+		printf("start: %d; end: %d; word = %s\n", result->rm_so, result->rm_eo, input_text_p);
 
-		strncpy(buffer, input_text+start, (result->rm_eo - result->rm_so));
-		printf("buffer = %s\n", buffer);
+		_safe_strncpy(buffer, input_text_p+result->rm_so, (result->rm_eo - result->rm_so));
+		printf("buffer = '%s'\n", buffer);
 
 		if ((already_found = _is_already_found(buffer, words)) != -1) {
 			printf("already found buffer = %s\n", buffer);
 			words[already_found].count += 1;
 		} else {
 			printf("NOT already found buffer = %s\n", buffer);
-			strncpy(words[words_index].text, buffer, (result->rm_eo - result->rm_so));
+			_safe_strncpy(words[words_index].text, buffer, (result->rm_eo - result->rm_so));
 			words[words_index].count = 1;
 
 			words_index++;
 		}
 
-		start += result->rm_eo; /* Update the offset */
+		input_text_p += result->rm_eo; /* Update the offset */
 		count++;
 	}
 
@@ -87,4 +90,12 @@ int _is_already_found(const char *word, word_count_word_t * words) {
 	}
 
 	return -1;	
+}
+
+// Horrible safe string copy, including null termination.
+void _safe_strncpy(char *dest, const char *src, size_t n) {
+	strncpy(dest, src, n);
+
+	// Properly null terminate.
+	dest[n] = '\0';
 }
