@@ -58,7 +58,6 @@ static void test_word_count_one_word(void)
 
 static void test_word_count_one_of_each_word(void)
 {
-   TEST_IGNORE();               // delete this line to run test
    int index = 0;
    int actual_word_count;
    char *input_text = "one of each";
@@ -85,7 +84,6 @@ static void test_word_count_one_of_each_word(void)
 
 static void test_word_count_multiple_occurrences_of_a_word(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "one fish two fish red fish blue fish";
@@ -117,7 +115,6 @@ static void test_word_count_multiple_occurrences_of_a_word(void)
 
 static void test_word_count_handles_cramped_lists(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "one,two,three";
@@ -143,7 +140,6 @@ static void test_word_count_handles_cramped_lists(void)
 
 static void test_word_count_handles_expanded_lists(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "one,\ntwo,\nthree";
@@ -169,7 +165,6 @@ static void test_word_count_handles_expanded_lists(void)
 
 static void test_word_count_ignore_punctuation(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "car: carpet as java: javascript!!&@$%^&";
@@ -201,7 +196,6 @@ static void test_word_count_ignore_punctuation(void)
 
 static void test_word_count_include_numbers(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "testing, 1, 2 testing";
@@ -227,7 +221,6 @@ static void test_word_count_include_numbers(void)
 
 static void test_word_count_normalize_case(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "go Go GO Stop stop";
@@ -250,7 +243,6 @@ static void test_word_count_normalize_case(void)
 
 static void test_word_count_with_apostrophes(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "First: don't laugh. Then: don't cry.";
@@ -282,7 +274,6 @@ static void test_word_count_with_apostrophes(void)
 
 static void test_word_count_with_quotation(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "Joe can't tell between 'large' and large.";
@@ -317,7 +308,6 @@ static void test_word_count_with_quotation(void)
 
 static void test_word_count_from_example(void)
 {
-   TEST_IGNORE();
    int index = 0;
    int actual_word_count;
    char *input_text = "olly olly in come free";
@@ -346,7 +336,6 @@ static void test_word_count_from_example(void)
 
 static void test_max_length_word(void)
 {
-   TEST_IGNORE();
    int actual_word_count;
    int index = 0;
    char *input_text =
@@ -378,7 +367,6 @@ static void test_max_length_word(void)
 
 static void test_excessive_length_word(void)
 {
-   TEST_IGNORE();
    int actual_word_count;
    int index = 0;
    char *input_text =
@@ -400,7 +388,6 @@ static void test_excessive_length_word(void)
 
 static void test_max_number_words(void)
 {
-   TEST_IGNORE();
    int actual_word_count;
    int index = 0;
    char *input_text =
@@ -479,7 +466,6 @@ static void test_max_number_words(void)
 
 static void test_excessive_number_words(void)
 {
-   TEST_IGNORE();
    int actual_word_count;
    int index = 0;
    char *input_text =
