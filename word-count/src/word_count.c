@@ -10,21 +10,27 @@ int _is_already_found(const char *word, word_count_word_t * words);
 void _safe_strncpy(char *dest, const char *src, size_t n);
 
 int word_count(const char *input_text, word_count_word_t * words) {
-	int count = 0;
 	int already_found;
-	int words_index = 0;
+	int words_found = 0;
 	int err_no;
+	int i;
 
-	//char *pattern = "[[:alnum:]]+'?[[:alnum:]]+";
 	char *pattern = "[[:alnum:]]+'?[[:alnum:]]*";
-	//char *pattern = "[[:alnum:]]";
 	regex_t *regex;
 
 	char buffer[MAX_WORD_LENGTH+1];
 
 	regmatch_t *result;
 
-	printf("input_text = %s\n", input_text);
+	// Umm ok so we're re-using the 'actual' array in all of the tests
+	// and have to clear it completely.
+	for (i=0; i<MAX_WORDS; i++) {
+		memset(words+i, 0, sizeof(*words));
+	}
+
+	printf("---------------------------------------------------------\ninput_text = %s\n", input_text);
+	printf("words[0].text = %s\n", words[0].text);
+	printf("words[0].count = %d\n", words[0].count);
 
 	/* Make space for the regular expression */
 	regex = (regex_t *) malloc(sizeof(regex_t));
@@ -57,24 +63,25 @@ int word_count(const char *input_text, word_count_word_t * words) {
 		if ((already_found = _is_already_found(buffer, words)) != -1) {
 			printf("already found buffer = %s\n", buffer);
 			words[already_found].count += 1;
+			printf("already found count = %d\n", words[already_found].count);
 		} else {
 			printf("NOT already found buffer = %s\n", buffer);
-			_safe_strncpy(words[words_index].text, buffer, (result->rm_eo - result->rm_so));
-			words[words_index].count = 1;
+			_safe_strncpy(words[words_found].text, buffer, (result->rm_eo - result->rm_so));
+			words[words_found].count = 1;
+			printf("NOT already found count = %d\n", words[already_found].count);
 
-			words_index++;
+			words_found++;
 		}
 
 		input_text += result->rm_eo; /* Update the offset */
-		count++;
 	}
 
-	printf("hi: count: %d\n", count);
+	printf("hi: words_found: %d\n", words_found);
 
 	regfree(regex); /* Free the regular expression data structure */
 	free(regex);
 
-	return count;
+	return words_found;
 }
 
 // Horrible linear search of array. Dicts are nice.
