@@ -16,7 +16,7 @@ int word_count(const char *input_text, word_count_word_t * words) {
 	int words_found = 0;
 	int err_no;
 
-	char *pattern = "[[:alnum:]]+'?[[:alnum:]]*";
+	char *pattern = "[[:alnum:]]+('?[[:alnum:]]+)?";
 	regex_t *regex;
 
 	char buffer[MAX_WORD_LENGTH+1];
