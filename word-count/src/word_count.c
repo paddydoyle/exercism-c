@@ -13,7 +13,6 @@ int word_count(const char *input_text, word_count_word_t * words) {
 	int already_found;
 	int words_found = 0;
 	int err_no;
-	int i;
 
 	char *pattern = "[[:alnum:]]+'?[[:alnum:]]*";
 	regex_t *regex;
@@ -24,9 +23,7 @@ int word_count(const char *input_text, word_count_word_t * words) {
 
 	// Umm ok so we're re-using the 'actual' array in all of the tests
 	// and have to clear it completely.
-	for (i=0; i<MAX_WORDS; i++) {
-		memset(words+i, 0, sizeof(*words));
-	}
+	memset(words, 0, MAX_WORDS * sizeof(*words));
 
 	printf("---------------------------------------------------------\ninput_text = %s\n", input_text);
 	printf("words[0].text = %s\n", words[0].text);
