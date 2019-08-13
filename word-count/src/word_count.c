@@ -62,6 +62,12 @@ int word_count(const char *input_text, word_count_word_t * words) {
 			return EXCESSIVE_LENGTH_WORD;
 		}
 
+		if (words_found >= MAX_WORDS) {
+			regfree(regex); /* Free the regular expression data structure */
+			free(regex);
+			return EXCESSIVE_NUMBER_OF_WORDS;
+		}
+
 		_safe_strncpy(buffer, input_text+result->rm_so, (result->rm_eo - result->rm_so));
 		printf("buffer = '%s'\n", buffer);
 		_str_tolower(buffer, MAX_WORD_LENGTH);
