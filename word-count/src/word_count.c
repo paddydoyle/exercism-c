@@ -56,6 +56,10 @@ int word_count(const char *input_text, word_count_word_t * words) {
 		printf("\n-- START: (%s)\n", input_text);
 		printf("start: %d; end: %d; word = %s\n", result->rm_so, result->rm_eo, input_text);
 
+		if ((result->rm_eo - result->rm_so) > MAX_WORD_LENGTH) {
+			return EXCESSIVE_LENGTH_WORD;
+		}
+
 		_safe_strncpy(buffer, input_text+result->rm_so, (result->rm_eo - result->rm_so));
 		printf("buffer = '%s'\n", buffer);
 		_str_tolower(buffer, MAX_WORD_LENGTH);
