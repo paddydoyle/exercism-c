@@ -23,8 +23,6 @@ int word_count(const char *input_text, word_count_word_t * words) {
 	char buffer[MAX_WORD_LENGTH+1];
 
 	regmatch_t *result;
-	int start=0; /* The offset from the beginning of the line */
-	const char *input_text_p = input_text;
 
 	printf("input_text = %s\n", input_text);
 
@@ -48,12 +46,12 @@ int word_count(const char *input_text, word_count_word_t * words) {
 		exit(EXIT_FAILURE);
 	}
 
-	while(regexec(regex, input_text_p, no_sub, result, 0) == 0) /* Found a match */
+	while(regexec(regex, input_text, no_sub, result, 0) == 0) /* Found a match */
 	{
-		printf("\n-- START: %d (%s)\n", start, input_text_p);
-		printf("start: %d; end: %d; word = %s\n", result->rm_so, result->rm_eo, input_text_p);
+		printf("\n-- START: (%s)\n", input_text);
+		printf("start: %d; end: %d; word = %s\n", result->rm_so, result->rm_eo, input_text);
 
-		_safe_strncpy(buffer, input_text_p+result->rm_so, (result->rm_eo - result->rm_so));
+		_safe_strncpy(buffer, input_text+result->rm_so, (result->rm_eo - result->rm_so));
 		printf("buffer = '%s'\n", buffer);
 
 		if ((already_found = _is_already_found(buffer, words)) != -1) {
@@ -67,7 +65,7 @@ int word_count(const char *input_text, word_count_word_t * words) {
 			words_index++;
 		}
 
-		input_text_p += result->rm_eo; /* Update the offset */
+		input_text += result->rm_eo; /* Update the offset */
 		count++;
 	}
 
