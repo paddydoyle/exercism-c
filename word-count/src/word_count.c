@@ -12,10 +12,11 @@ void _safe_strncpy(char *dest, const char *src, size_t n);
 void _str_tolower(char *str, int len);
 
 int word_count(const char *input_text, word_count_word_t * words) {
-	int already_found;
+	int already_found_index;
 	int words_found = 0;
 	int err_no;
 
+	// Extended regex.
 	char *pattern = "[[:alnum:]]+('?[[:alnum:]]+)?";
 	regex_t *regex;
 
@@ -23,13 +24,11 @@ int word_count(const char *input_text, word_count_word_t * words) {
 
 	regmatch_t *result;
 
+	//////////////////////////////////////////////////////////////////
 	// Umm ok so we're re-using the 'actual' array in all of the tests
-	// and have to clear it completely.
+	// and so have to clear it completely before each run.
+	//////////////////////////////////////////////////////////////////
 	memset(words, 0, MAX_WORDS * sizeof(*words));
-
-	printf("---------------------------------------------------------\ninput_text = %s\n", input_text);
-	printf("words[0].text = %s\n", words[0].text);
-	printf("words[0].count = %d\n", words[0].count);
 
 	/* Make space for the regular expression */
 	regex = (regex_t *) malloc(sizeof(regex_t));
@@ -41,21 +40,14 @@ int word_count(const char *input_text, word_count_word_t * words) {
 		exit(EXIT_FAILURE);
 	}
 
-	printf("hi: %s\n", input_text);
-
 	size_t no_sub = regex->re_nsub+1; /* How many matches are there in a line? */                                                                                                                                        
-	printf("hi: %d\n", (int)no_sub);
-
+	/* Make space for the match */
 	if((result = (regmatch_t *) malloc(sizeof(regmatch_t) * no_sub))==0) {
 		perror("Not enough memory for regmatch_t.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	while(regexec(regex, input_text, no_sub, result, 0) == 0) /* Found a match */
-	{
-		printf("\n-- START: (%s)\n", input_text);
-		printf("start: %d; end: %d; word = %s\n", result->rm_so, result->rm_eo, input_text);
-
+	while(regexec(regex, input_text, no_sub, result, 0) == 0) {
 		if ((result->rm_eo - result->rm_so) > MAX_WORD_LENGTH) {
 			regfree(regex); /* Free the regular expression data structure */
 			free(regex);
@@ -69,27 +61,20 @@ int word_count(const char *input_text, word_count_word_t * words) {
 		}
 
 		_safe_strncpy(buffer, input_text+result->rm_so, (result->rm_eo - result->rm_so));
-		printf("buffer = '%s'\n", buffer);
-		_str_tolower(buffer, MAX_WORD_LENGTH);
-		printf("buffer NOW = '%s'\n", buffer);
 
-		if ((already_found = _is_already_found(buffer, words)) != -1) {
-			printf("already found buffer = %s\n", buffer);
-			words[already_found].count += 1;
-			printf("already found count = %d\n", words[already_found].count);
+		_str_tolower(buffer, MAX_WORD_LENGTH);
+
+		if ((already_found_index = _is_already_found(buffer, words)) != -1) {
+			words[already_found_index].count += 1;
 		} else {
-			printf("NOT already found buffer = %s\n", buffer);
 			_safe_strncpy(words[words_found].text, buffer, (result->rm_eo - result->rm_so));
 			words[words_found].count = 1;
-			printf("NOT already found count = %d\n", words[already_found].count);
 
 			words_found++;
 		}
 
 		input_text += result->rm_eo; /* Update the offset */
 	}
-
-	printf("hi: words_found: %d\n", words_found);
 
 	regfree(regex); /* Free the regular expression data structure */
 	free(regex);
@@ -119,10 +104,11 @@ int _is_already_found(const char *word, word_count_word_t * words) {
 void _safe_strncpy(char *dest, const char *src, size_t n) {
 	strncpy(dest, src, n);
 
-	// Properly null terminate.
+	// Properly null terminate please.
 	dest[n] = '\0';
 }
 
+// Horrible string tolower.
 void _str_tolower(char *str, int len) {
 	int i;
 
