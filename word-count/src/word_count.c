@@ -51,12 +51,14 @@ int word_count(const char *input_text, word_count_word_t * words) {
 		if ((result->rm_eo - result->rm_so) > MAX_WORD_LENGTH) {
 			regfree(regex); /* Free the regular expression data structure */
 			free(regex);
+			free(result);
 			return EXCESSIVE_LENGTH_WORD;
 		}
 
 		if (words_found >= MAX_WORDS) {
 			regfree(regex); /* Free the regular expression data structure */
 			free(regex);
+			free(result);
 			return EXCESSIVE_NUMBER_OF_WORDS;
 		}
 
@@ -77,6 +79,7 @@ int word_count(const char *input_text, word_count_word_t * words) {
 	}
 
 	regfree(regex); /* Free the regular expression data structure */
+	free(result);
 	free(regex);
 
 	return words_found;
