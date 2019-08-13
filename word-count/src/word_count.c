@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +9,7 @@
 
 int _is_already_found(const char *word, word_count_word_t * words);
 void _safe_strncpy(char *dest, const char *src, size_t n);
+void _str_tolower(char *str, int len);
 
 int word_count(const char *input_text, word_count_word_t * words) {
 	int already_found;
@@ -56,6 +58,8 @@ int word_count(const char *input_text, word_count_word_t * words) {
 
 		_safe_strncpy(buffer, input_text+result->rm_so, (result->rm_eo - result->rm_so));
 		printf("buffer = '%s'\n", buffer);
+		_str_tolower(buffer, MAX_WORD_LENGTH);
+		printf("buffer NOW = '%s'\n", buffer);
 
 		if ((already_found = _is_already_found(buffer, words)) != -1) {
 			printf("already found buffer = %s\n", buffer);
@@ -105,4 +109,12 @@ void _safe_strncpy(char *dest, const char *src, size_t n) {
 
 	// Properly null terminate.
 	dest[n] = '\0';
+}
+
+void _str_tolower(char *str, int len) {
+	int i;
+
+	for (i=0; i<len; i++) {
+		str[i] = tolower(str[i]);
+	}
 }
