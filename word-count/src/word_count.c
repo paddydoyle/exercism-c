@@ -62,7 +62,7 @@ int word_count(const char *input_text, word_count_word_t * words) {
 
 		_safe_strncpy(buffer, input_text+result->rm_so, (result->rm_eo - result->rm_so));
 
-		_str_tolower(buffer, MAX_WORD_LENGTH);
+		_str_tolower(buffer, strlen(buffer));
 
 		if ((already_found_index = _is_already_found(buffer, words)) != -1) {
 			words[already_found_index].count += 1;
