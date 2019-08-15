@@ -29,11 +29,15 @@ char *abbreviate(const char *phrase) {
 
 	strncpy(phrase_copy, phrase, strlen(phrase));
 
-	for (token = strtok(phrase_copy, delim); ; token = strtok(NULL, delim)) {
+	token = strtok(phrase_copy, delim);
+
+	while (token != NULL) {
 		if (token == NULL) {
 			break;
 		}
 		abbrev[i++] = toupper(token[0]);
+
+		token = strtok(NULL, delim);
 	}
 
 	abbrev[i] = '\0';
