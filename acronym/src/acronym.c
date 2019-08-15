@@ -5,7 +5,7 @@
 #include <string.h>
 
 char *abbreviate(const char *phrase) {
-	char *phrase_copy;
+	char *phrase_copy = NULL;
 	char *token;
 	const char *delim = " -";
 	char *abbrev = NULL;
@@ -22,7 +22,7 @@ char *abbreviate(const char *phrase) {
 	}
 
 	// strtok destroys the input string, which is declared as 'const' here
-	if ((phrase_copy = malloc(sizeof(char) * strlen(phrase))) == 0) {
+	if ((phrase_copy = malloc(sizeof(char) * strlen(phrase) + 1)) == 0) {
 		fprintf(stderr, "Malloc failed.");
 		exit(EXIT_FAILURE);
 	}
