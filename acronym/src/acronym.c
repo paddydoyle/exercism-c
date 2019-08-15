@@ -1,4 +1,5 @@
 #include "acronym.h"
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,8 +27,13 @@ char *abbreviate(const char *phrase) {
 		exit(EXIT_FAILURE);
 	}
 
-	for (token = strtok(phrase_copy, delim); token == NULL; token = strtok(NULL, delim)) {
-		abbrev[i++] = token[0];
+	strncpy(phrase_copy, phrase, strlen(phrase));
+
+	for (token = strtok(phrase_copy, delim); ; token = strtok(NULL, delim)) {
+		if (token == NULL) {
+			break;
+		}
+		abbrev[i++] = toupper(token[0]);
 	}
 
 	abbrev[i] = '\0';
