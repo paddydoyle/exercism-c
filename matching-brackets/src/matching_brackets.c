@@ -131,7 +131,7 @@ bool is_paired(const char *input) {
 	// If we pop and the brackets don't match, then it's a
 	// counter-example.
 
-	while (i < strlen(input)) {
+	for (i=0; i < strlen(input); i++) {
 		printf("i = %d; char = %c\n", i, input[i]);
 		// Three cases:
 		// - non-bracket
@@ -178,8 +178,6 @@ bool is_paired(const char *input) {
 				return false;
 			}
 		}
-
-		i++;
 	}
 
 	// Is the stack empty? If so, we matched everything.
