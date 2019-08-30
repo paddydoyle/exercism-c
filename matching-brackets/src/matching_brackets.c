@@ -178,6 +178,8 @@ bool is_paired(const char *input) {
 		i++;
 	}
 
+	// Is the stack empty? If so, we matched everything.
+	result = (stack->index == EMPTY_INDEX);
 
 	// Tidy up
 	_destroy_stack(stack);
