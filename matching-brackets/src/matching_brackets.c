@@ -1,5 +1,4 @@
 #include "matching_brackets.h"
-#include <stdlib.h>
 #include <string.h>
 
 // Indices into the strings below
@@ -7,14 +6,6 @@
 #define CLOSING "]})"
 #define EMPTY_INDEX -1
 
-// Helper struct: Simple stack structure.
-typedef struct stack {
-	char *text;
-	int size;
-	int index;
-} stack_t;
-
-stack_t* _create_stack(size_t size);
 stack_t* _create_stack(size_t size) {
 	stack_t *stack;
 
@@ -40,7 +31,6 @@ stack_t* _create_stack(size_t size) {
 	return stack;
 }
 
-void _destroy_stack(stack_t *stack);
 void _destroy_stack(stack_t *stack) {
 	if (stack == NULL) {
 		return;
@@ -51,7 +41,6 @@ void _destroy_stack(stack_t *stack) {
 }
 
 // Helper function: push char to stack
-bool _stack_push(stack_t *stack, char bracket);
 bool _stack_push(stack_t *stack, char bracket) {
 	if (stack->index + 1 >= stack->size) {
 		// stack is full!
@@ -65,7 +54,6 @@ bool _stack_push(stack_t *stack, char bracket) {
 }
 
 // Helper function: pop char from stack
-bool _stack_pop(stack_t *stack, char *bracket);
 bool _stack_pop(stack_t *stack, char *bracket) {
 	if (stack->index == EMPTY_INDEX) {
 		// stack is empty
@@ -78,8 +66,12 @@ bool _stack_pop(stack_t *stack, char *bracket) {
 	return true;
 }
 
+// Helper function: is_empty?
+bool _stack_is_empty(stack_t *stack) {
+	return (stack->index == EMPTY_INDEX);
+}
+
 // Helper function: test for matching brackets.
-bool _brackets_match(char opening, char closing);
 bool _brackets_match(char opening, char closing) {
 	switch (opening) {
 		case '[':
@@ -157,7 +149,7 @@ bool is_paired(const char *input) {
 	}
 
 	// Is the stack empty? If so, we matched everything.
-	result = (stack->index == EMPTY_INDEX);
+	result = _stack_is_empty(stack);
 
 	// Tidy up
 	_destroy_stack(stack);
