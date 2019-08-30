@@ -1,1 +1,186 @@
 #include "matching_brackets.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Indices into the strings below
+#define BRACKET 0
+#define BRACE 1
+#define PAREN 2
+#define OPENING "[{("
+#define CLOSING "]})"
+#define BRACKETS "[{()}]"
+#define EMPTY_INDEX -1
+
+// Helper struct: Simple stack structure.
+typedef struct stack {
+	char *text;
+	int size;
+	int index;
+} stack_t;
+
+stack_t* _create_stack(size_t size);
+stack_t* _create_stack(size_t size) {
+	stack_t *stack;
+
+	// Simple char array stack. Only needs to be half as
+	if ((stack = malloc(sizeof(stack_t))) == NULL) {
+		// Ran out of memory!
+		return false;
+	}
+
+	// Simple char array stack. Only needs to be half as
+	if ((stack->text = malloc(size + 1)) == NULL) {
+		// Ran out of memory!
+		return false;
+	}
+
+	// Init members.
+	stack->size = size;
+	stack->index = EMPTY_INDEX;
+	// For ease of debug/printing - make it a terminated string
+	memset(stack->text, '\0', size+1);
+	printf("malloc ok\n");
+
+	return stack;
+}
+
+void _destroy_stack(stack_t *stack);
+void _destroy_stack(stack_t *stack) {
+	if (stack == NULL) {
+		return;
+	}
+
+	free (stack->text);
+	free (stack);
+}
+
+// Helper function: push char to stack
+bool _stack_push(stack_t *stack, char bracket);
+bool _stack_push(stack_t *stack, char bracket) {
+	if (stack->index + 1 >= stack->size) {
+		// stack is full!
+		return false;
+	}
+
+	printf("_stack_push: index = %d\n", stack->index);
+	stack->index++;
+	printf("_stack_push: index = %d\n", stack->index);
+	stack->text[stack->index] = bracket;
+	printf("_stack_push: top = %c\n", stack->text[stack->index]);
+
+	return true;
+}
+
+// Helper function: pop char from stack
+bool _stack_pop(stack_t *stack, char *bracket);
+bool _stack_pop(stack_t *stack, char *bracket) {
+	if (stack->index == EMPTY_INDEX) {
+		// stack is empty
+		return false;
+	}
+
+	printf("_stack_pop: index = %d\n", stack->index);
+	printf("_stack_pop: char = %c\n", stack->text[stack->index]);
+	*bracket = stack->text[stack->index];
+	printf("_stack_pop: char = %c\n", *bracket);
+	stack->index--;
+	printf("_stack_pop: index = %d\n", stack->index);
+
+	return true;
+}
+
+// Helper function: test for matching brackets.
+bool _brackets_match(char opening, char closing);
+bool _brackets_match(char opening, char closing) {
+	switch (opening) {
+		case '[':
+			return closing == ']';
+		case '{':
+			return closing == '}';
+		case '(':
+			return closing == ')';
+		default:
+			return false;
+	}
+}
+
+bool is_paired(const char *input) {
+	unsigned int i = 0;
+	char c;
+	char *search;
+
+	stack_t *stack;
+	bool result = true;
+
+	if (input == NULL) {
+		printf("NULL input\n");
+		return false;
+	}
+
+	if (strlen(input) == 0) {
+		printf("EMPTY input\n");
+		return true;
+	}
+
+	stack = _create_stack(strlen(input));
+
+	// Method:
+	// Use a stack to push on opening brackets as we find them,
+	// and pop closing as we find them.
+	// If we pop and the brackets don't match, then it's a
+	// counter-example.
+
+	while (i < strlen(input)) {
+		printf("i = %d; char = %c\n", i, input[i]);
+		// Three cases:
+		// - non-bracket
+		// - opening bracket
+		// - closing bracket
+
+		// Ignore non-bracket chars
+		if (strchr(BRACKETS, input[i]) == NULL) {
+			printf("non-bracket char, continue\n");
+			continue;
+		}
+
+		// Opening: push to stack
+		if ((search = strchr(OPENING, input[i])) != NULL) {
+			printf("opening bracket char, pushing\n");
+			if (!_stack_push(stack, *search)) {
+				// Stack problems! Abort!
+				result = false;
+				break;
+			}
+			printf("opening bracket char: stack = %s\n", stack->text);
+		}
+
+		// Closing: pop from stack and see if they match
+		if ((search = strchr(CLOSING, input[i])) != NULL) {
+			printf("closing bracket char, popping\n");
+			if (!_stack_pop(stack, &c)) {
+				// Stack problems! Abort!
+				result = false;
+				break;
+			}
+			printf("opening bracket char: stack = %s\n", stack->text);
+			printf("opening bracket char: popped = %c\n", c);
+
+			// Match?
+			if (!_brackets_match(c, *search)) {
+				printf("COUNTER EXAmple\n");
+				// Found counter-example.
+				result = false;
+				break;
+			}
+		}
+
+		i++;
+	}
+
+
+	// Tidy up
+	_destroy_stack(stack);
+
+	return result;
+}
