@@ -1,7 +1,6 @@
 #include "matching_brackets.h"
 #include <string.h>
 
-// Indices into the strings below
 #define OPENING "[{("
 #define CLOSING "]})"
 #define EMPTY_INDEX -1
@@ -42,8 +41,7 @@ void _destroy_stack(stack_t *stack) {
 
 // Helper function: push char to stack
 bool _stack_push(stack_t *stack, char bracket) {
-	if (stack->index + 1 >= stack->size) {
-		// stack is full!
+	if (_stack_is_full(stack)) {
 		return false;
 	}
 
@@ -55,8 +53,7 @@ bool _stack_push(stack_t *stack, char bracket) {
 
 // Helper function: pop char from stack
 bool _stack_pop(stack_t *stack, char *bracket) {
-	if (stack->index == EMPTY_INDEX) {
-		// stack is empty
+	if (_stack_is_empty(stack)) {
 		return false;
 	}
 
@@ -69,6 +66,10 @@ bool _stack_pop(stack_t *stack, char *bracket) {
 // Helper function: is_empty?
 bool _stack_is_empty(stack_t *stack) {
 	return (stack->index == EMPTY_INDEX);
+}
+
+bool _stack_is_full(stack_t *stack) {
+	return (stack->index + 1 >= stack->size);
 }
 
 // Helper function: test for matching brackets.
