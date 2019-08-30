@@ -111,13 +111,8 @@ bool is_paired(const char *input) {
 	stack_t *stack;
 	bool result = true;
 
-	if (input == NULL) {
-		printf("NULL input\n");
-		return false;
-	}
-
-	if (strlen(input) == 0) {
-		printf("EMPTY input\n");
+	// Simple edge cases.
+	if (input == NULL || strlen(input) == 0) {
 		return true;
 	}
 
@@ -149,8 +144,10 @@ bool is_paired(const char *input) {
 			printf("opening bracket char, pushing\n");
 			if (!_stack_push(stack, *opening)) {
 				// Stack problems! Abort!
-				result = false;
-				break;
+				// Tidy up
+				_destroy_stack(stack);
+
+				return false;
 			}
 			printf("opening bracket char: stack = %s\n", stack->text);
 		} else if (closing) {
