@@ -4,9 +4,6 @@
 #include <string.h>
 
 // Indices into the strings below
-#define BRACKET 0
-#define BRACE 1
-#define PAREN 2
 #define OPENING "[{("
 #define CLOSING "]})"
 #define BRACKETS "[{()}]"
@@ -38,8 +35,9 @@ stack_t* _create_stack(size_t size) {
 	// Init members.
 	stack->size = size;
 	stack->index = EMPTY_INDEX;
+
 	// For ease of debug/printing - make it a terminated string
-	memset(stack->text, '\0', size+1);
+	memset(stack->text, '\0', size + 1);
 	printf("malloc ok\n");
 
 	return stack;
@@ -108,7 +106,7 @@ bool _brackets_match(char opening, char closing) {
 bool is_paired(const char *input) {
 	unsigned int i = 0;
 	char c;
-	char *search;
+	char *opening, *closing;
 
 	stack_t *stack;
 	bool result = true;
@@ -138,16 +136,19 @@ bool is_paired(const char *input) {
 		// - opening bracket
 		// - closing bracket
 
+		opening = strchr(OPENING, input[i]);
+		closing = strchr(CLOSING, input[i]);
+
 		// Ignore non-bracket chars
-		if (strchr(BRACKETS, input[i]) == NULL) {
+		if (opening == NULL && closing == NULL) {
 			printf("non-bracket char, continue\n");
 			continue;
 		}
 
 		// Opening: push to stack
-		if ((search = strchr(OPENING, input[i])) != NULL) {
+		if ((opening = strchr(OPENING, input[i])) != NULL) {
 			printf("opening bracket char, pushing\n");
-			if (!_stack_push(stack, *search)) {
+			if (!_stack_push(stack, *opening)) {
 				// Stack problems! Abort!
 				result = false;
 				break;
@@ -156,7 +157,7 @@ bool is_paired(const char *input) {
 		}
 
 		// Closing: pop from stack and see if they match
-		if ((search = strchr(CLOSING, input[i])) != NULL) {
+		if ((closing = strchr(CLOSING, input[i])) != NULL) {
 			printf("closing bracket char, popping\n");
 			if (!_stack_pop(stack, &c)) {
 				// Stack problems! Abort!
@@ -169,7 +170,7 @@ bool is_paired(const char *input) {
 			printf("opening bracket char: popped = %c\n", c);
 
 			// Match?
-			if (!_brackets_match(c, *search)) {
+			if (!_brackets_match(c, *closing)) {
 				printf("COUNTER EXAmple\n");
 				// Found counter-example.
 				// Tidy up
