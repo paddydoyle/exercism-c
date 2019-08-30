@@ -160,8 +160,10 @@ bool is_paired(const char *input) {
 			printf("closing bracket char, popping\n");
 			if (!_stack_pop(stack, &c)) {
 				// Stack problems! Abort!
-				result = false;
-				break;
+				// Tidy up
+				_destroy_stack(stack);
+
+				return false;
 			}
 			printf("opening bracket char: stack = %s\n", stack->text);
 			printf("opening bracket char: popped = %c\n", c);
@@ -170,8 +172,10 @@ bool is_paired(const char *input) {
 			if (!_brackets_match(c, *search)) {
 				printf("COUNTER EXAmple\n");
 				// Found counter-example.
-				result = false;
-				break;
+				// Tidy up
+				_destroy_stack(stack);
+
+				return false;
 			}
 		}
 
