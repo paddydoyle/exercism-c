@@ -1,12 +1,10 @@
 #include "matching_brackets.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 // Indices into the strings below
 #define OPENING "[{("
 #define CLOSING "]})"
-#define BRACKETS "[{()}]"
 #define EMPTY_INDEX -1
 
 // Helper struct: Simple stack structure.
@@ -38,7 +36,6 @@ stack_t* _create_stack(size_t size) {
 
 	// For ease of debug/printing - make it a terminated string
 	memset(stack->text, '\0', size + 1);
-	printf("malloc ok\n");
 
 	return stack;
 }
@@ -61,11 +58,8 @@ bool _stack_push(stack_t *stack, char bracket) {
 		return false;
 	}
 
-	printf("_stack_push: index = %d\n", stack->index);
 	stack->index++;
-	printf("_stack_push: index = %d\n", stack->index);
 	stack->text[stack->index] = bracket;
-	printf("_stack_push: top = %c\n", stack->text[stack->index]);
 
 	return true;
 }
@@ -78,12 +72,8 @@ bool _stack_pop(stack_t *stack, char *bracket) {
 		return false;
 	}
 
-	printf("_stack_pop: index = %d\n", stack->index);
-	printf("_stack_pop: char = %c\n", stack->text[stack->index]);
 	*bracket = stack->text[stack->index];
-	printf("_stack_pop: char = %c\n", *bracket);
 	stack->index--;
-	printf("_stack_pop: index = %d\n", stack->index);
 
 	return true;
 }
@@ -103,6 +93,13 @@ bool _brackets_match(char opening, char closing) {
 	}
 }
 
+/*
+ * Methodology:
+ * Use a stack to push on opening brackets and pop when a closing bracket
+ * is met.
+ * If we pop and the brackets don't match, then it's a
+ * counter-example.
+ */
 bool is_paired(const char *input) {
 	unsigned int i = 0;
 	char popped;
@@ -118,14 +115,7 @@ bool is_paired(const char *input) {
 
 	stack = _create_stack(strlen(input));
 
-	// Method:
-	// Use a stack to push on opening brackets as we find them,
-	// and pop closing as we find them.
-	// If we pop and the brackets don't match, then it's a
-	// counter-example.
-
 	for (i=0; i < strlen(input); i++) {
-		printf("i = %d; char = %c\n", i, input[i]);
 		// Three cases:
 		// - non-bracket
 		// - opening bracket
@@ -137,11 +127,8 @@ bool is_paired(const char *input) {
 
 		// Ignore non-bracket chars
 		if (opening == NULL && closing == NULL) {
-			printf("non-bracket char, continue\n");
 			continue;
 		} else if (opening) {
-			// Opening: push to stack
-			printf("opening bracket char, pushing\n");
 			if (!_stack_push(stack, *opening)) {
 				// Stack problems! Abort!
 				// Tidy up
@@ -149,10 +136,7 @@ bool is_paired(const char *input) {
 
 				return false;
 			}
-			printf("opening bracket char: stack = %s\n", stack->text);
 		} else if (closing) {
-			// Closing: pop from stack and see if they match
-			printf("closing bracket char, popping\n");
 			if (!_stack_pop(stack, &popped)) {
 				// Stack problems! Abort!
 				// Tidy up
@@ -160,12 +144,9 @@ bool is_paired(const char *input) {
 
 				return false;
 			}
-			printf("opening bracket char: stack = %s\n", stack->text);
-			printf("opening bracket char: popped = %c\n", popped);
 
 			// Match?
 			if (!_brackets_match(popped, *closing)) {
-				printf("COUNTER EXAmple\n");
 				// Found counter-example.
 				// Tidy up
 				_destroy_stack(stack);
