@@ -5,10 +5,10 @@ resistor_band_t color_array[] = {
 	GREEN, BLUE, VIOLET, GREY, WHITE
 };
 
-unsigned int color_code(resistor_band_t color) {
+resistor_band_t color_code(resistor_band_t color) {
 	return color;
 }
 
-unsigned int* colors() {
+resistor_band_t* colors() {
 	return color_array;
 }
